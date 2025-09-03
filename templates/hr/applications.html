@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Application Management{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2><i class="fas fa-file-import me-2"></i>Job Applications</h2>
+                <p class="text-muted">Manage job applications and candidate information</p>
+            </div>
+            <div class="btn-group">
+                <a href="{{ url_for('exports.export_applicants') }}" class="btn btn-info">
+                    <i class="fas fa-download me-1"></i>Export All
+                </a>
+                <a href="{{ url_for('exports.export_applicants', status='Pending') }}" class="btn btn-outline-warning">
+                    <i class="fas fa-clock me-1"></i>Export Pending
+                </a>
+                <a href="{{ url_for('exports.export_applicants', status='In Review') }}" class="btn btn-outline-info">
+                    <i class="fas fa-eye me-1"></i>Export In Review
+                </a>
+                <a href="{{ url_for('exports.export_applicants', status='Accepted') }}" class="btn btn-outline-success">
+                    <i class="fas fa-check me-1"></i>Export Accepted
+                </a>
+                <a href="{{ url_for('exports.export_applicants', status='Rejected') }}" class="btn btn-outline-danger">
+                    <i class="fas fa-times me-1"></i>Export Rejected
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                {% if applications %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Application ID</th>
+                                <th>Full Name</th>
+                                <th>Position</th>
+                                <th>Applied Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for application in applications %}
+                            <tr>
+                                <td><strong>{{ application.application_id }}</strong></td>
+                                <td>{{ application.full_name }}</td>
+                                <td>{{ application.position_applied }}</td>
+                                <td>{{ application.applied_date }}</td>
+                                <td>
+                                    <span class="badge bg-{{ 'warning' if application.status == 'Pending' else 'success' if application.status == 'Approved' else 'danger' }}">
+                                        {{ application.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('applications.view_application', app_id=application.id) }}" 
+                                       class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye me-1"></i>Review
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+                    <h5 class="text-center text-muted">No applications found</h5>
+                    <p class="text-center text-muted">Applications will appear here when candidates apply for positions</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
